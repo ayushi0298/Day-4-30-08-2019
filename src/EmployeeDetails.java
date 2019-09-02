@@ -1,5 +1,11 @@
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -9,6 +15,9 @@ public class EmployeeDetails {
 	int salary;
 	String designation;
 	String department;
+	
+	static int sortfield = 1;
+	static int sortorder = 1;
 
 	static Scanner sc = new Scanner(System.in);
 
@@ -25,10 +34,46 @@ public class EmployeeDetails {
 		System.out.println("Enter employee Department");
 		department = sc.next();
 	}
+	public static HashMap<Integer, EmployeeDetails> sortByValue(
+			HashMap<Integer, EmployeeDetails> hm) {
+
+		List<Map.Entry<Integer, EmployeeDetails>> list = new LinkedList<Map.Entry<Integer, EmployeeDetails>>(
+				hm.entrySet());
+
+		Collections.sort(list, new Comparator<Map.Entry<Integer, EmployeeDetails>>() {
+			public int compare(Map.Entry<Integer, EmployeeDetails> o1,
+					Map.Entry<Integer, EmployeeDetails> o2) {
+				return (o1.getValue()).compareTo(o2.getValue());
+			}
+		});
+
+		HashMap<Integer, EmployeeDetails> temp = new LinkedHashMap<Integer, EmployeeDetails>();
+		for (Map.Entry<Integer, EmployeeDetails> aa : list) {
+			temp.put(aa.getKey(), aa.getValue());
+		}
+		return temp;
+	}
+
+	protected int compareTo(EmployeeDetails emp) {
+		if (sortfield == 1) {
+			if (sortorder == 2) {
+				sortorder = -1;
+			}
+			return sortorder * ename.compareTo(emp.ename);
+		}
+		if (sortfield == 2) {
+			if (sortorder == 2) {
+				sortorder = -1;
+			}
+			return sortorder * (salary - emp.salary);
+		}
+
+		return 0;
+	}
 	public static void main(String... sd) {
 		HashMap<Integer, EmployeeDetails> hm = new HashMap<>();
 		outer: while (true) {
-			System.out.println("1. Add Emp \n 2.View All Emp \n 3.Remove Emp \n 4. Clear Data \n 5. Change Sal \n 6.Search Emp \n 7. View dept Wise \n 8. Exit");
+			System.out.println("1. Add Emp \n 2.View All Emp \n 3.Remove Emp \n 4. Clear Data \n 5. Change Sal \n 6.Search Emp \n 7. View dept Wise \n 8. Sort employees \n 9: Exit");
 			int option = sc.nextInt();
 			switch (option) {
 			case 1:
@@ -103,6 +148,17 @@ public class EmployeeDetails {
 				 }
 				 break;
 			case 8:
+				System.out.println("Sort on Basis of \n 1.Employee Name \n 2.Employee Salary");
+				EmployeeDetails.sortfield = sc.nextInt();
+				System.out.println("Select a Sorting Order \n 1.asceding \n 2. descending");
+				EmployeeDetails.sortorder = sc.nextInt();
+				hm = sortByValue(hm);
+				for (EmployeeDetails e1 : hm.values()) {
+					System.out.println(e1.enumber + " " + e1.ename + " " + e1.salary + " " + e1.designation + " " + e1.department);
+
+				}
+				break;
+			case 9:
 				break outer;
 			}
 
